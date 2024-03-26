@@ -1,31 +1,29 @@
 # IDA2MASM
 Create asm files from IDA, which meet the MASM grammar and can be re-assembled and run as the original version.
 
-一、IDA中汇编与MASM的汇编语法上的差异：
-1.MASM对于长度大于247的标示符报错name too long！另外，如果汇编代码一行超过512个字符也会报错line too long!（是不是觉得这MASM很low，反正我在心里已经对它吐槽几万遍了。）
-2.IDA分析函数堆栈时生成了许多汇编宏，如果这些宏里面有自定义的数据结构，MASM不能识别。
-3.IDA中字符串的自动命名容易相互冲突或与MASM关键字冲突。
-4.IDA中imul指令包含负数时显示为十六进制的形式，而MASM可能不识别报错。
-5.IDA可能会将一些全局变量命名为MASM中的关键字，如：str;Str;name;Name;neg;SubStr;add;aDD;aDC;aDDSS;mul;imul;inc;cwd;ptr;end;mask;width;lock;type;in;out;length;looped;offset;db;size等等。
-语法杂项调整：
-(1). retn->ret  
-(2). rep retn->db 0F3h\nret  
-(3).proc near/far->proc ;near/far 
-(4). align xx->align (xx) 
-(5).segment para public->segment para ;public  
-(6).assume->;assume  
-(7).call cs:->call qword ptr  
-(8).jmp cs:->jmp qword ptr  
-(9).删除cs:/ds:  
-(10).movq rxx->movd rxx  
-(11).140000000h->CodeStart-1000h  
-(12).rva->imagerel  
-(13).gs:30h->gs:[30h]  
-(14).[rax+rbp]在MASM中要多占1字节的机器码（可能会导致短跳指令失败），改为[rbp+rax]则不会。
-(15).标签全局化，”:”->”::” 
+1. The difference in assembly syntax between assembly in IDA and MASM:
+   1. MASM reports an error name too long for identifiers with a length greater than 247! In addition, if a line of assembly code exceeds 512 characters, an error line too long! will be reported (Do you think this MASM is very low? Anyway, I have complained about it tens of thousands of times in my heart.)
+   2. IDA generates a lot of code when analyzing the function stack. Assembly macros. If these macros contain custom data structures, MASM cannot recognize them.
+   3. The automatic naming of strings in IDA is prone to conflict with each other or with the MASM keyword.
+   4. When the imul instruction in IDA contains a negative number, it is displayed in hexadecimal form, and MASM may not recognize it and report an error.
+   5. IDA may name some global variables as keywords in MASM, such as: str;Str;name;Name;neg;SubStr;add;aDD;aDC;aDDSS;mul;imul;inc;cwd;ptr;end ;mask;width;lock;type;in;out;length;looped;offset;db;size, etc.
+   Miscellaneous syntax adjustments: 
+(1). retn->ret
+(2). rep retn->db 0F3h\nret
+(3).proc near/far->proc ;near/far (4).align xx->align (xx) (5).segment para public->segment para ;public
+(6).assume->;assume
+(7).call cs:->call qword ptr
+(8).jmp cs:->jmp qword ptr
+(9).Delete cs:/ds:
+(10).movq rxx->movd rxx
+(11).140000000h->CodeStart-1000h
+(12).rva->imagerel
+(13).gs:30h->gs:[30h]
+(14).[rax+rbp] occupies 1 more byte of machine code in MASM (which may cause the short jump instruction to fail), but changing it to [rbp+rax] will not.
+(15). Label globalization, ":"->"::"
 
-二、操作步骤：
+2. Operation steps:
 1.In IDA, shift+F1, Ctrl+A, delete all types
 2.press Alt+F7, choose 1.py
 3.press Alt+F10, create asm file.
-4.press Alt+F7, choose 2.py
+4.press Alt+F7, choose2.py
